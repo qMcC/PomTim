@@ -17,7 +17,8 @@ namespace pomodorotimer
         Bitmap _buttonPause = pomodorotimer.Properties.Resources.ButtonPause;
 
         // timer values
-        int genericTimeS = 300; // 300 s = 5 minutes
+        int timerDuration = 300; // 300 seconds = 5 minutes
+        int? timeLeft = null;
 
         public Form1()
         {
@@ -26,19 +27,58 @@ namespace pomodorotimer
         }
         
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void playPauseButton_Click(object sender, EventArgs e)
         {
-            if (pictureBox1.Image == _buttonPause)
+            // if paused, play and switch button to pause, otherwise vice versa
+            if (playPauseButton.Image == _buttonPause)
             {
-                pictureBox1.Image = _buttonPlay;
+                playPauseButton.Image = _buttonPlay;
+                alarmTimer.Stop();
+
             }
             else
             {
-                pictureBox1.Image = _buttonPause;
+                playPauseButton.Image = _buttonPause;
+                alarmTimer.Start();
+                if (timeLeft != null)
+                {
+                    updateTime();
+                    return;
+                }
+                timeLeft = timerDuration;
+                updateTime();
             }
         }
 
         private void timerDisplay_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void alarmTimer_Tick(object sender, EventArgs e)
+        {
+            if (timeLeft == 0)
+            {
+                Close();
+            }
+            else
+            {
+                timeLeft = timeLeft - 1;
+                updateTime();
+            }
+        }
+
+        private void updateTime()
+        {
+            if (timeLeft % 60 < 10)
+            {
+                timerDisplay.Text = timeLeft / 60 + ":0" + timeLeft % 60;
+                return;
+            }
+            timerDisplay.Text = timeLeft / 60 + ":" + timeLeft % 60;
+        }
+
+        private void musicChangeButton_Click(object sender, EventArgs e)
         {
 
         }
